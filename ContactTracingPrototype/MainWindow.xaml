@@ -18,7 +18,8 @@
             <ColumnDefinition />
             <ColumnDefinition />
         </Grid.ColumnDefinitions>
-        <TextBlock Name="everything" TextWrapping="Wrap" Grid.Row="0" Margin="5" Grid.ColumnSpan="2"></TextBlock>
+        <TextBlock Name="everything" TextWrapping="Wrap" Grid.Row="0" Margin="5" Grid.ColumnSpan="2">
+        </TextBlock>
         <Button Click="EndDay_Click" Grid.Row="1" Grid.ColumnSpan="2">End day</Button>
         <Button Click="Reset_Click" Grid.Row="2"  Grid.ColumnSpan="2">Reset</Button>
         <ScrollViewer Grid.Row="3" Margin="5">
