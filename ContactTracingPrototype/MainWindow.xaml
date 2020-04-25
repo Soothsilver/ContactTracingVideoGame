@@ -1,0 +1,36 @@
+﻿<Window x:Class="ContactTracingPrototype.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ContactTracingPrototype"
+        xmlns:wpf="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="600" Width="800">
+    <Grid Margin="5">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+        <TextBlock Name="everything" TextWrapping="Wrap" Grid.Row="0" Margin="5" Grid.ColumnSpan="2"></TextBlock>
+        <Button Click="EndDay_Click" Grid.Row="1" Grid.ColumnSpan="2">End day</Button>
+        <Button Click="Reset_Click" Grid.Row="2"  Grid.ColumnSpan="2">Reset</Button>
+        <ScrollViewer Grid.Row="3" Margin="5">
+             <TextBlock Name="log" TextWrapping="Wrap"></TextBlock>
+        </ScrollViewer>
+        <wpf:CartesianChart Name="theChart" Series="{Binding SeriesCollection}" LegendLocation="Bottom" Grid.Row="3" Grid.Column="1">
+            <wpf:CartesianChart.AxisX >
+                <wpf:Axis Title="Day"  />
+            </wpf:CartesianChart.AxisX>
+            <wpf:CartesianChart.AxisY>
+                <wpf:Axis Title="Number of cases"></wpf:Axis>
+            </wpf:CartesianChart.AxisY>
+        </wpf:CartesianChart>
+    </Grid>
+</Window>
