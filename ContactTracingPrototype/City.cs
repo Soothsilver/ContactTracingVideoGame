@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Media;
+using ContactTracingPrototype.Documents;
 using Soothsilver.Random;
 
 namespace ContactTracingPrototype
@@ -17,7 +18,7 @@ namespace ContactTracingPrototype
         public ConfirmedCasesCurve ConfirmedCasesCurve = new ConfirmedCasesCurve();
         public List<Person> OrderedTests = new List<Person>();
         public List<Person> InitialSentinelTests = new List<Person>();
-
+        public List<SituationReport> DailyUpdates = new List<SituationReport>();
 
         public City()
         {
@@ -82,7 +83,7 @@ namespace ContactTracingPrototype
                     InitialSentinelTests.Add(target);
                 }
             }
-            
+
             EndDay();
         }
 
@@ -327,6 +328,7 @@ namespace ContactTracingPrototype
             EpidemiologicalCurveLog +=  "Day " + (1+Today) + ": " + string.Join("/", Statics.AllStages.Select(stage => People.Count(ppl => ppl.DiseaseStatus == stage))) + "\n";
             Model.AddCurrentStatus(this);
             ConfirmedCasesCurve.AddCurrentStatus(report);
+            DailyUpdates.Add(report);
             // Next day:
             Today++;
         }
