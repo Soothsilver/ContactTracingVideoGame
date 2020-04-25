@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows.Media;
 using Soothsilver.Random;
 
 namespace ContactTracingPrototype
@@ -13,6 +14,9 @@ namespace ContactTracingPrototype
         public string LastLog = "";
         public string EpidemiologicalCurveLog = "";
         public InfectionCurveModel Model = new InfectionCurveModel();
+        public ConfirmedCasesCurve ConfirmedCasesCurve = new ConfirmedCasesCurve();
+        public List<Person> OrderedTests = new List<Person>();
+        public List<Person> InitialSentinelTests = new List<Person>();
 
 
         public City()
@@ -67,13 +71,41 @@ namespace ContactTracingPrototype
                 }
             }
             
-            // Add infections
+            // Add infections at day 0
             for (int i = 0; i < 4; i++)
             {
                 List<Person> susceptibles = People.Where(ppl => ppl.DiseaseStatus == DiseaseStage.Susceptible).ToList();
                 Person target = susceptibles.GetRandom();
                 target.DiseaseStatus = DiseaseStage.Mild;
+                if (i <= 1)
+                {
+                    InitialSentinelTests.Add(target);
+                }
             }
+            
+            EndDay();
+        }
+
+        private void AdministerTest(Person target, SituationReport report, bool isSentinel)
+        {
+            if (target.DiseaseStatus >= DiseaseStage.AsymptomaticInfectious1 && target.DiseaseStatus <= DiseaseStage.Immune)
+            {
+                target.LastTestResult = PCRTestResult.Positive;
+                if (isSentinel)
+                {
+                    report.PositiveSentinel.Add(target);
+                }
+                else
+                {
+                    report.PositiveOrdered.Add(target);
+                }
+            }
+            else
+            {
+                target.LastTestResult = PCRTestResult.Negative;
+            }
+
+            target.LastTestDate = Today;
         }
 
         private int creatingPersonId = 0;
@@ -112,29 +144,50 @@ namespace ContactTracingPrototype
         public int Today = 0;
         public void EndDay()
         {
-            
+            SituationReport report = new SituationReport();
             foreach (Person person in People)
             {
                 Day day = new Day();
                 person.History.Add(day);
             }
             
-            // Quarantine contacts
-            foreach (Person person in People)
+            // Administer tests
+            foreach (Person sentinelTest in InitialSentinelTests)
             {
-                if (person.DiseaseStatus == DiseaseStage.Mild && !person.Quarantined)
-                {
-                    person.Quarantined = true;
-                    foreach (Day day in person.History.Reverse<Day>().Take(7))
-                    {
-                        foreach (Contact contact in day.Contacts)
-                        {
-                            contact.TargetContact.Quarantined = true;
-                        }
-                    }
-                }
+                AdministerTest(sentinelTest, report, true);
+            }
+            InitialSentinelTests.Clear();
+            foreach (Person orderedTest in OrderedTests)
+            {
+                AdministerTest(orderedTest, report, false);
+            }
+            OrderedTests.Clear();
+            foreach (Person person in People.Where(ppl => ppl.DiseaseStatus == DiseaseStage.Mild))
+            {
+                if (R.PercentChance(10))
+                    AdministerTest(person, report, true);
+            }
+            foreach (Person person in People.Where(ppl => ppl.DiseaseStatus == DiseaseStage.Severe))
+            {
+                if (R.PercentChance(80))
+                    AdministerTest(person, report, true);
             }
             
+            // Quarantine contacts
+//            foreach (Person person in People)
+//            {
+//                if (person.DiseaseStatus == DiseaseStage.Mild && !person.Quarantined)
+//                {
+//                    person.Quarantined = true;
+//                    foreach (Day day in person.History.Reverse<Day>().Take(7))
+//                    {
+//                        foreach (Contact contact in day.Contacts)
+//                        {
+//                            contact.TargetContact.Quarantined = true;
+//                        }
+//                    }
+//                }
+//            }
 
             // Form contacts
             LastLog = "Stuff happened today.";
@@ -273,9 +326,16 @@ namespace ContactTracingPrototype
             }
             EpidemiologicalCurveLog +=  "Day " + (1+Today) + ": " + string.Join("/", Statics.AllStages.Select(stage => People.Count(ppl => ppl.DiseaseStatus == stage))) + "\n";
             Model.AddCurrentStatus(this);
+            ConfirmedCasesCurve.AddCurrentStatus(report);
             // Next day:
             Today++;
         }
+    }
+
+    internal enum PCRTestResult
+    {
+        Positive,
+        Negative
     }
 
     internal class Workplace : Area
@@ -338,6 +398,8 @@ namespace ContactTracingPrototype
         public bool IsInfectious => DiseaseStatus >= DiseaseStage.AsymptomaticInfectious1 && DiseaseStatus < DiseaseStage.Immune;
         public bool IsActiveCase => DiseaseStatus > DiseaseStage.Susceptible && DiseaseStatus < DiseaseStage.Immune;
         public bool Quarantined { get; set; }
+        public PCRTestResult LastTestResult { get; set; }
+        public int LastTestDate { get; set; }
     }
 
     internal class Residence : Area

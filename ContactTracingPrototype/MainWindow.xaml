@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:ContactTracingPrototype"
         xmlns:wpf="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
         mc:Ignorable="d"
-        Title="MainWindow" Height="600" Width="800">
+        Title="Contact tracing video game" Height="600" Width="800">
     <Grid Margin="5">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -22,10 +22,15 @@
         </TextBlock>
         <Button Click="EndDay_Click" Grid.Row="1" Grid.ColumnSpan="2">End day</Button>
         <Button Click="Reset_Click" Grid.Row="2"  Grid.ColumnSpan="2">Reset</Button>
-        <ScrollViewer Grid.Row="3" Margin="5">
-             <TextBlock Name="log" TextWrapping="Wrap"></TextBlock>
-        </ScrollViewer>
-        <wpf:CartesianChart Name="theChart" Series="{Binding SeriesCollection}" LegendLocation="Bottom" Grid.Row="3" Grid.Column="1">
+        <wpf:CartesianChart Name="theChart" Series="{Binding SeriesCollection}" LegendLocation="Bottom" Grid.Row="3" Grid.Column="0">
+            <wpf:CartesianChart.AxisX >
+                <wpf:Axis Title="Day"  />
+            </wpf:CartesianChart.AxisX>
+            <wpf:CartesianChart.AxisY>
+                <wpf:Axis Title="Number of cases"></wpf:Axis>
+            </wpf:CartesianChart.AxisY>
+        </wpf:CartesianChart>
+        <wpf:CartesianChart Name="theChart2" Series="{Binding SeriesCollection}" LegendLocation="Bottom" Grid.Row="3" Grid.Column="1">
             <wpf:CartesianChart.AxisX >
                 <wpf:Axis Title="Day"  />
             </wpf:CartesianChart.AxisX>
