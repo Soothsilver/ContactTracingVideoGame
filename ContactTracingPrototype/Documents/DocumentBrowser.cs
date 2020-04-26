@@ -27,7 +27,7 @@ namespace ContactTracingPrototype.Documents
         {
             get
             {
-                if (currentPosition < 0 && currentPosition >= HISTORY_SIZE) return null;
+                if (currentPosition < 0 || currentPosition >= HISTORY_SIZE) return null;
                 return history[currentPosition];
             }
         }

@@ -170,7 +170,7 @@ namespace ContactTracingPrototype.Documents
                 else
                 {
                     textBlock.Inlines.Add(Person.Name + " works at " + Person.Workplace.Name + ", where they met:\n");
-                    foreach (Day day in Person.History.Take(Person.LastTracedAt).Reverse<Day>())
+                    foreach (Day day in Person.History.Take(Person.LastTracedAt).Reverse<Day>().Take(10))
                     {
                         textBlock.Inlines.Add("  Day " + day.Date + ": ");
                         CaseRenderer.RenderCases(textBlock.Inlines, day.Contacts.Where(cc => cc.WhereTheyMet is Workplace).Select(c => c.TargetContact).ToList());
