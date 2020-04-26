@@ -15,11 +15,11 @@ namespace ContactTracingPrototype.Documents
 @"Welcome to Sorpigal
 You are the epidemiologist responsible for the town of Sorpigal. 
 
-Your objective: Contain the outbreak of the disease. You win when 10 days pass without a new case.
+Your objective: Contain the outbreak of the disease. You win when there are no more active cases in the town.
 
 The first cases of the disease have already appeared in the town. Look at the situation update and take action!
 
-Situation update.
+First situation update:
 
 ";
         }

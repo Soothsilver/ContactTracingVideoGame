@@ -28,6 +28,9 @@ namespace ContactTracingPrototype
         private void Reset()
         {
             city = new City();
+            
+            theChart.SetValue(Grid.ColumnSpanProperty, 2);
+            theChart2.Visibility = Visibility.Collapsed;
             documentBrowser = new DocumentBrowser(this.documentTextBox);
             dailyDocuments = new ObservableCollection<DailyUpdateDocument>();
 
@@ -42,6 +45,16 @@ namespace ContactTracingPrototype
             city.allDocuments.Add(newGameDocument);
             documentsListBox.SelectedItem = newGameDocument;
             
+            city.allDocuments.Add(new InformationDocument("Tips",
+@"Left-click a person to read what you know about that person. Right-click a person to order a test, order home quarantine or trace that person's contacts.
+
+Tips:
+- At the beginning, you know about some cases but more cases are hidden in the town.
+- Every night, you get test results from last day's test.
+- Some people who have symptoms manifest even if you don't order a test for them! This is ""sentinel testing"".
+"));
+            
+            
 
             //for (int i = 0; i < 50; i++)
             //{
@@ -51,9 +64,15 @@ namespace ContactTracingPrototype
 
         private void EndDay_Click(object sender, RoutedEventArgs e)
         {
+            EndOneDay();
+        }
+
+        private SituationReport EndOneDay()
+        {
             city.EndDay();
 
-            var document = new DailyUpdateDocument($"Day {city.DailyUpdates.Count}", city.DailyUpdates.Last());
+            SituationReport situationReport = city.DailyUpdates.Last();
+            var document = new DailyUpdateDocument($"Day {city.DailyUpdates.Count}", situationReport);
             dailyDocuments.Add(document);
             city.allDocuments.Add(document);
             documentBrowser.GoTo(document);
@@ -61,8 +80,9 @@ namespace ContactTracingPrototype
 
             if (city.People.Count(ppl => ppl.IsActiveCase) == 0 && !city.OutbreakEnded)
             {
-                // END
                 city.OutbreakEnded = true;
+                theChart.SetValue(Grid.ColumnSpanProperty, 1);
+                theChart2.Visibility = Visibility.Visible;
                 int cases = city.People.Count(ppl => ppl.DiseaseStatus != DiseaseStage.Susceptible);
                 var endDocument = new InformationDocument("Outbreak contained!",
                     $@"There are no more active cases.
@@ -76,13 +96,17 @@ A total of {cases} people caught the disease. You needed to quarantine {city.Peo
 " + (cases < 20 ? "Well done and thank you for playing our game!" : "This could have gone a bit better..."));
                 city.allDocuments.Add(endDocument);
                 documentsListBox.SelectedItem = endDocument;
-
             }
+
+            return situationReport;
         }
 
         private void Reset_Click(object sender, RoutedEventArgs e)
         {
-            Reset();
+            if (MessageBox.Show("Do you want to start a new game?", "Start new game?", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+            {
+                Reset();
+            }
         }
 
         private void BackButton_Click(object sender, RoutedEventArgs e)
@@ -112,6 +136,15 @@ A total of {cases} people caught the disease. You needed to quarantine {city.Peo
             for (int i = 0; i < 50; i++)
             {
                 EndDay_Click(sender, e);
+            }
+        }
+
+        private void PassTime_Click(object sender, RoutedEventArgs e)
+        {
+            SituationReport report = EndOneDay();
+            while (!city.OutbreakEnded && report.PositiveOrdered.Count == 0 && report.PositiveSentinel.Count == 0)
+            {
+                report = EndOneDay();
             }
         }
     }

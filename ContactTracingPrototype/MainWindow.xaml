@@ -6,9 +6,9 @@
         xmlns:local="clr-namespace:ContactTracingPrototype"
         xmlns:wpf="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
         mc:Ignorable="d"
-        Title="Contact tracing video game" Height="623.333" Width="800"
+        Title="Contact tracing video game" Height="700" Width="800"
         Icon="ContractTracingIcon.ico">
-    <Grid Margin="5">
+    <Grid Margin="5" Name="gridX">
         <Grid.RowDefinitions>
             <RowDefinition Height="3*" />
             <RowDefinition Height="1*" />
@@ -38,26 +38,26 @@
                     <Button x:Name="ForwardButton" Content="Forward" Width="75" Click="ForwardButton_Click" Margin="5" Padding="5"/>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Grid.Column="1" HorizontalAlignment="Right">
-                    <Button Click="Reset_Click" Margin="5" Padding="5">Reset</Button>
                     <Button Click="EndDay_Click" Margin="5" Padding="5">End day</Button>
-                    <Button Click="End50Day_Click" Margin="5" Padding="5">End 50 days</Button>
+                    <Button Click="PassTime_Click" Margin="5" Padding="5" ToolTip="Ends days until sentinel testing reveals a new confirmed case.">Pass time until new case</Button>
+                    <Button Click="Reset_Click" Margin="5" Padding="5" ToolTip="End current game and play from scratch again">Reset</Button>
                 </StackPanel>
             </Grid>
         </Grid>
-        <wpf:CartesianChart Name="theChart" Series="{Binding SeriesCollection}" LegendLocation="Bottom" Grid.Row="1" Grid.Column="0">
+        <wpf:CartesianChart Name="theChart" Series="{Binding SeriesCollection}" LegendLocation="Bottom" Grid.Row="1" Grid.ColumnSpan="2" Grid.Column="0">
             <wpf:CartesianChart.AxisX >
                 <wpf:Axis Title="Day"  />
             </wpf:CartesianChart.AxisX>
             <wpf:CartesianChart.AxisY>
-                <wpf:Axis Title="Number of cases"></wpf:Axis>
+                <wpf:Axis Title="Number of confirmed cases"></wpf:Axis>
             </wpf:CartesianChart.AxisY>
         </wpf:CartesianChart>
-        <wpf:CartesianChart Name="theChart2" Series="{Binding SeriesCollection}" LegendLocation="Bottom" Grid.Row="1" Grid.Column="1">
+        <wpf:CartesianChart Name="theChart2" Series="{Binding SeriesCollection}" LegendLocation="Bottom" Grid.Row="1" Grid.Column="1" Visibility="Collapsed">
             <wpf:CartesianChart.AxisX >
-                <wpf:Axis Title="Day"  />
+                <wpf:Axis Title="Day" />
             </wpf:CartesianChart.AxisX>
             <wpf:CartesianChart.AxisY>
-                <wpf:Axis Title="Number of cases"></wpf:Axis>
+                <wpf:Axis Title="Total cases (including unreported)"></wpf:Axis>
             </wpf:CartesianChart.AxisY>
         </wpf:CartesianChart>
     </Grid>
