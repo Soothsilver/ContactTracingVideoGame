@@ -27,6 +27,7 @@ namespace ContactTracingPrototype
         private void Reset()
         {
             city = new City();
+            this.DataContext = city;
             
             theChart.SetValue(Grid.ColumnSpanProperty, 2);
             theChart2.Visibility = Visibility.Collapsed;
