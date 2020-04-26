@@ -236,6 +236,10 @@ namespace ContactTracingPrototype
                     {
                         Person w1 = workplace.PresentWorkers.GetRandom();
                         Person w2 = workplace.PresentWorkers.GetRandom();
+                        if (w1 == w2)
+                        {
+                            continue;
+                        }
                         w1.History[Today].Contacts.Add(new Contact(w2, workplace));
                         w2.History[Today].Contacts.Add(new Contact(w1, workplace));
                     }
