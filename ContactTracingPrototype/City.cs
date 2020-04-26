@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Media;
 using ContactTracingPrototype.Documents;
@@ -19,6 +20,7 @@ namespace ContactTracingPrototype
         public List<Person> OrderedTests = new List<Person>();
         public List<Person> InitialSentinelTests = new List<Person>();
         public List<SituationReport> DailyUpdates = new List<SituationReport>();
+        public ObservableCollection<Document> allDocuments = new ObservableCollection<Document>();
 
         public City()
         {
@@ -122,7 +124,7 @@ namespace ContactTracingPrototype
             {
                 for (int ci = 2; ci < familyMemberCount; ci++)
                 {
-                    Person child = new Person("Person #" + (1 + creatingPersonId), AgeCategory.Child, residence, null);
+                    Person child = new Person("Person #" + (1 + creatingPersonId), AgeCategory.Child, residence, null, this);
                     People.Add(child);
                     residence.Family.Add(child);
                     creatingPersonId++;
@@ -130,7 +132,7 @@ namespace ContactTracingPrototype
             }
             for (int ci = 0; ci < Math.Min(2, familyMemberCount); ci++)
             {
-                Person adult = new Person("Person #" + (1 + creatingPersonId), AgeCategory.Adult, residence, null);
+                Person adult = new Person("Person #" + (1 + creatingPersonId), AgeCategory.Adult, residence, null, this);
                 People.Add(adult);
                 residence.Family.Add(adult);
                 creatingPersonId++;
@@ -150,7 +152,7 @@ namespace ContactTracingPrototype
             SituationReport report = new SituationReport();
             foreach (Person person in People)
             {
-                Day day = new Day();
+                Day day = new Day(Today);
                 person.History.Add(day);
             }
             
@@ -160,6 +162,7 @@ namespace ContactTracingPrototype
                 AdministerTest(sentinelTest, report, true);
             }
             InitialSentinelTests.Clear();
+            report.TestsOrdered = OrderedTests.Count;
             foreach (Person orderedTest in OrderedTests)
             {
                 AdministerTest(orderedTest, report, false);
@@ -204,7 +207,7 @@ namespace ContactTracingPrototype
                         {
                             if (one != two)
                             {
-                                one.History[Today].Contacts.Add(new Contact(two));
+                                one.History[Today].Contacts.Add(new Contact(two, residence));
                             }
                         }
                     }
@@ -217,8 +220,8 @@ namespace ContactTracingPrototype
                     {
                         Person w1 = workplace.PresentWorkers.GetRandom();
                         Person w2 = workplace.PresentWorkers.GetRandom();
-                        w1.History[Today].Contacts.Add(new Contact(w2));
-                        w2.History[Today].Contacts.Add(new Contact(w1));
+                        w1.History[Today].Contacts.Add(new Contact(w2, workplace));
+                        w2.History[Today].Contacts.Add(new Contact(w1, workplace));
                     }
                 }
             }
@@ -356,16 +359,23 @@ namespace ContactTracingPrototype
 
     internal class Day
     {
+        public Day(int date)
+        {
+            Date = date;
+        }
+        public int Date;
         public List<Contact> Contacts = new List<Contact>();
     }
 
     internal class Contact
     {
         public Person TargetContact;
+        public Area WhereTheyMet;
 
-        public Contact(Person two)
+        public Contact(Person two, Area whereTheyMet)
         {
             TargetContact = two;
+            WhereTheyMet = whereTheyMet;
         }
     }
 
@@ -384,16 +394,19 @@ namespace ContactTracingPrototype
     internal class Person
     {
         public string Name;
+        public City City;
         public AgeCategory AgeCategory;
         public Residence Residence;
         public Area Workplace;
         public DiseaseStage DiseaseStatus;
         public List<Day> History = new List<Day>();
+        public int LastTracedAt = -1;
 
-        public Person(string name, AgeCategory ageCategory, Residence residence, Area workplace)
+        public Person(string name, AgeCategory ageCategory, Residence residence, Area workplace, City city)
         {
             Name = name;
             AgeCategory = ageCategory;
+            City = city;
             Residence = residence;
             Workplace = workplace;
             DiseaseStatus = DiseaseStage.Susceptible;

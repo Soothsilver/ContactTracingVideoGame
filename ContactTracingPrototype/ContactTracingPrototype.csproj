@@ -66,6 +66,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="ConfirmedCasesCurve.cs" />
+    <Compile Include="Documents\CaseRenderer.cs" />
     <Compile Include="Documents\DailyUpdateDocument.cs" />
     <Compile Include="Documents\Document.cs" />
     <Compile Include="Documents\DocumentBrowser.cs" />
@@ -73,6 +74,7 @@
     <Compile Include="Documents\NewGameDocument.cs" />
     <Compile Include="Documents\PersonStatusDocument.cs" />
     <Compile Include="InfectionCurveModel.cs" />
+    <Compile Include="SimpleCommand.cs" />
     <Compile Include="SituationReport.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>

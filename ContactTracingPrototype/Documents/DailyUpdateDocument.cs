@@ -1,5 +1,6 @@
-﻿using System;
+﻿using System.Collections.Generic;
 using System.Linq;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 
@@ -19,7 +20,7 @@ namespace ContactTracingPrototype.Documents
 
         protected virtual void RenderIntro(TextBlock textBlock)
         {
-            textBlock.Inlines.Add( this.Title + " situation update.\n\n");
+            textBlock.Inlines.Add(new Run(this.Title + " situation update.\n\n") {FontWeight = FontWeights.Bold});
         }
 
         public override void Render(TextBlock textBlock)
@@ -37,16 +38,18 @@ namespace ContactTracingPrototype.Documents
                 }
                 else if (situationReport.PositiveOrdered.Count == 1)
                 {
-                    textBlock.Inlines.Add("One retuned positive.\n");
+                    textBlock.Inlines.Add("One retuned positive: \n");
                 }
                 else
                 {
-                    textBlock.Inlines.Add("Some of them were positive.\n");
+                    textBlock.Inlines.Add("Some of them were positive: \n");
                 }
-                textBlock.Inlines.Add(new LineBreak());
+
+                CaseRenderer.RenderCases(textBlock.Inlines, situationReport.PositiveOrdered);
+                textBlock.Inlines.Add(".\n");
             }
 
-            textBlock.Inlines.Add("Sentinel testing.\n");
+            textBlock.Inlines.Add(new Run("Sentinel testing:\n"){FontWeight = FontWeights.Bold});
             if (situationReport.PositiveSentinel.Count == 0)
             {
                 textBlock.Inlines.Add("Sentinel testing did not reveal any cases.\n");
@@ -54,16 +57,19 @@ namespace ContactTracingPrototype.Documents
             else if (situationReport.PositiveSentinel.Count == 1)
             {
                 textBlock.Inlines.Add("One person had symptoms and was tested positive: ");
-                textBlock.Inlines.Add(situationReport.PositiveSentinel[0].Name);
+                CaseRenderer.RenderCases(textBlock.Inlines, situationReport.PositiveSentinel);
                 textBlock.Inlines.Add(".\n");
 
             }
             else
             {
                 textBlock.Inlines.Add("Some people were tested because they had symptoms, and they tested positive: ");
-                textBlock.Inlines.Add(string.Join(", ", situationReport.PositiveSentinel.Select(p => p.Name)));
+                CaseRenderer.RenderCases(textBlock.Inlines, situationReport.PositiveSentinel);
                 textBlock.Inlines.Add(".\n");
             }
         }
+
+     
     }
 }
+

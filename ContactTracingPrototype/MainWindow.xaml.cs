@@ -15,10 +15,12 @@ namespace ContactTracingPrototype
         City city = new City();
         DocumentBrowser documentBrowser;
         ObservableCollection<DailyUpdateDocument> dailyDocuments;
-        ObservableCollection<Document> allDocuments = new ObservableCollection<Document>();
+
+        public static MainWindow Instance;
 
         public MainWindow()
         {
+            Instance = this;
             InitializeComponent();
             Reset();
         }
@@ -28,18 +30,18 @@ namespace ContactTracingPrototype
             city = new City();
             documentBrowser = new DocumentBrowser(this.documentTextBox);
             dailyDocuments = new ObservableCollection<DailyUpdateDocument>();
-            allDocuments.Clear();
 
             this.theChart.DataContext = city.ConfirmedCasesCurve;
             this.theChart2.DataContext = city.Model;
 
-            Binding documentsBinding = new Binding {Source = allDocuments};
+            Binding documentsBinding = new Binding {Source = city.allDocuments};
             this.documentsListBox.SetBinding(ListBox.ItemsSourceProperty, documentsBinding);
 
             var newGameDocument = new NewGameDocument(city.DailyUpdates.First());
             dailyDocuments.Add(newGameDocument);
-            documentBrowser.GoTo(newGameDocument);
-            allDocuments.Add(newGameDocument);
+            city.allDocuments.Add(newGameDocument);
+            documentsListBox.SelectedItem = newGameDocument;
+            
 
             //for (int i = 0; i < 50; i++)
             //{
@@ -53,7 +55,7 @@ namespace ContactTracingPrototype
 
             var document = new DailyUpdateDocument($"Day {city.DailyUpdates.Count}", city.DailyUpdates.Last());
             dailyDocuments.Add(document);
-            allDocuments.Add(document);
+            city.allDocuments.Add(document);
             documentBrowser.GoTo(document);
             documentsListBox.SelectedItem = document;
 
@@ -72,7 +74,7 @@ You contained this outbreak in {city.Today} days.
 A total of {cases} people caught the disease. You needed to quarantine {city.People.Count(ppl => ppl.Quarantined)} people.
 
 " + (cases < 20 ? "Well done and thank you for playing our game!" : "This could have gone a bit better..."));
-                allDocuments.Add(endDocument);
+                city.allDocuments.Add(endDocument);
                 documentsListBox.SelectedItem = endDocument;
 
             }
