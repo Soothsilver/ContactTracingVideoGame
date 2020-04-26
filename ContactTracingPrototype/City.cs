@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Windows.Media;
 using ContactTracingPrototype.Documents;
 using RandomNameGeneratorLibrary;
@@ -9,7 +11,7 @@ using Soothsilver.Random;
 
 namespace ContactTracingPrototype
 {
-    class City
+    class City : INotifyPropertyChanged
     {
         public List<Person> People = new List<Person>();
         public List<Area> Areas = new List<Area>();
@@ -90,7 +92,18 @@ namespace ContactTracingPrototype
             EndDay();
         }
 
-        public bool OutbreakEnded { get; set; }
+        private bool outbreakEnded;
+
+        public bool OutbreakEnded
+        {
+            get => outbreakEnded;
+            set
+            {
+                outbreakEnded = value;
+                OnPropertyChanged(nameof(CanEndDay));
+            }
+        }
+        
 
         private void AdministerTest(Person target, SituationReport report, bool isSentinel)
         {
@@ -340,6 +353,15 @@ namespace ContactTracingPrototype
             // Next day:
             Today++;
         }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        public bool CanEndDay => !OutbreakEnded;
     }
 
     internal enum PCRTestResult
@@ -439,6 +461,7 @@ namespace ContactTracingPrototype
             this.LastTracedAt = this.City.Today;
             this.EnsureHasDocument();
         }
+        
 
         public void CheckDiseaseStatus()
         {
