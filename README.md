@@ -4,7 +4,7 @@ As an epidemiologist, you must contain an outbreak of COVID-19 before it gets ou
 
 <img src="Screenshot2.png" width="400" />
 
-TODO add download link
+[Download the game!](https://github.com/Soothsilver/ContactTracingVideoGame/releases/download/initial-release/Contact.tracing.video.game.exe)
 
 **Problem:** People do not like lockdowns and believe that lockdowns are the only way to suppress the epidemic. Thus, they believe the epidemic can't be suppressed long-term.
 
