@@ -10,19 +10,41 @@
         Icon="ContractTracingIcon.ico">
     <Grid Margin="5">
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
+            <RowDefinition Height="3*" />
+            <RowDefinition Height="1*" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition />
-            <ColumnDefinition />
+            <ColumnDefinition Width="1*"></ColumnDefinition>
+            <ColumnDefinition Width="1*"></ColumnDefinition>
         </Grid.ColumnDefinitions>
-        <TextBlock Name="documentTextBox" TextWrapping="Wrap" Grid.Row="3" Margin="216,0.5,6,314.5" Grid.ColumnSpan="2" Background="#FFF0F0F0"/>
-        <Button Click="EndDay_Click" Grid.Row="2" Margin="277,0,10,0" Grid.Column="1">End day</Button>
-        <Button Click="Reset_Click" Grid.Row="2" Margin="154,0,152,0" Grid.Column="1">Reset</Button>
-        <wpf:CartesianChart Name="theChart" Series="{Binding SeriesCollection}" LegendLocation="Bottom" Grid.Row="3" Grid.Column="0" Margin="0,269.5,0,-0.5">
+        <Grid Grid.ColumnSpan="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="3*" />
+            </Grid.ColumnDefinitions>
+            <ListBox x:Name="documentsListBox" Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.RowSpan="2" Grid.Column="0" SelectionChanged="documentsListBox_SelectionChanged" />
+            <TextBlock Name="documentTextBox" TextWrapping="Wrap" Grid.Row="1" Grid.Column="1" Background="#FFF0F0F0" Margin="5" Padding="5"/>
+            <Grid Grid.Row="0" Grid.Column="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <StackPanel Orientation="Horizontal" Grid.Column="0" HorizontalAlignment="Left">
+                    <Button x:Name="BackButton" Content="Back" Width="75" Click="BackButton_Click" Margin="5" Padding="5" />
+                    <Button x:Name="ForwardButton" Content="Forward" Width="75" Click="ForwardButton_Click" Margin="5" Padding="5"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Grid.Column="1" HorizontalAlignment="Right">
+                    <Button Click="Reset_Click" Margin="5" Padding="5">Reset</Button>
+                    <Button Click="EndDay_Click" Margin="5" Padding="5">End day</Button>
+                    <Button Click="End50Day_Click" Margin="5" Padding="5">End 50 days</Button>
+                </StackPanel>
+            </Grid>
+        </Grid>
+        <wpf:CartesianChart Name="theChart" Series="{Binding SeriesCollection}" LegendLocation="Bottom" Grid.Row="1" Grid.Column="0">
             <wpf:CartesianChart.AxisX >
                 <wpf:Axis Title="Day"  />
             </wpf:CartesianChart.AxisX>
@@ -30,7 +52,7 @@
                 <wpf:Axis Title="Number of cases"></wpf:Axis>
             </wpf:CartesianChart.AxisY>
         </wpf:CartesianChart>
-        <wpf:CartesianChart Name="theChart2" Series="{Binding SeriesCollection}" LegendLocation="Bottom" Grid.Row="3" Grid.Column="1" Margin="0,270.5,0,-1.5">
+        <wpf:CartesianChart Name="theChart2" Series="{Binding SeriesCollection}" LegendLocation="Bottom" Grid.Row="1" Grid.Column="1">
             <wpf:CartesianChart.AxisX >
                 <wpf:Axis Title="Day"  />
             </wpf:CartesianChart.AxisX>
@@ -38,8 +60,5 @@
                 <wpf:Axis Title="Number of cases"></wpf:Axis>
             </wpf:CartesianChart.AxisY>
         </wpf:CartesianChart>
-        <Button x:Name="BackButton" Content="Back" HorizontalAlignment="Left" Margin="216,0,0,0" VerticalAlignment="Top" Width="75" Grid.Row="2" Click="BackButton_Click"/>
-        <Button x:Name="ForwardButton" Content="Forward" HorizontalAlignment="Left" Margin="296,0,0,0" VerticalAlignment="Top" Width="75" Grid.RowSpan="2" Grid.Row="1" Click="ForwardButton_Click"/>
-        <ListBox x:Name="documentsListBox" HorizontalAlignment="Left" Height="266" Margin="10,0,0,0" Grid.Row="2" VerticalAlignment="Top" Width="201" Grid.RowSpan="2" SelectionChanged="documentsListBox_SelectionChanged"/>
     </Grid>
 </Window>

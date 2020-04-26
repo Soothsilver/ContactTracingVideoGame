@@ -87,6 +87,8 @@ namespace ContactTracingPrototype
             EndDay();
         }
 
+        public bool OutbreakEnded { get; set; }
+
         private void AdministerTest(Person target, SituationReport report, bool isSentinel)
         {
             if (target.DiseaseStatus >= DiseaseStage.AsymptomaticInfectious1 && target.DiseaseStatus <= DiseaseStage.Immune)

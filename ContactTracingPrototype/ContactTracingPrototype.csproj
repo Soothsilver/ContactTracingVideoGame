@@ -69,6 +69,7 @@
     <Compile Include="Documents\DailyUpdateDocument.cs" />
     <Compile Include="Documents\Document.cs" />
     <Compile Include="Documents\DocumentBrowser.cs" />
+    <Compile Include="Documents\InformationDocument.cs" />
     <Compile Include="Documents\NewGameDocument.cs" />
     <Compile Include="Documents\PersonStatusDocument.cs" />
     <Compile Include="InfectionCurveModel.cs" />
