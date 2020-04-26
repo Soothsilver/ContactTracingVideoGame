@@ -36,43 +36,26 @@ namespace ContactTracingPrototype.Documents
                 hyperlink.ContextMenu.Items.Add(new MenuItem()
                 {
                     Header = "Quarantine",
-                    Command = new SimpleCommand(()=> person.Quarantined = true )
+                    Command = new SimpleCommand(()=> person.Quarantine() )
                 });
                 hyperlink.ContextMenu.Items.Add(new MenuItem()
                 {
                     Header = "Test",
-                    Command = new SimpleCommand(()=> person.City.OrderedTests.Add(person) )
+                    Command = new SimpleCommand(()=> person.Test() )
                 });
                 hyperlink.ContextMenu.Items.Add(new MenuItem()
                 {
                     Header = "Trace",
-                    Command = new SimpleCommand(() =>
-                        {
-                            person.LastTracedAt = person.City.Today;
-                            EnsureHasDocument(person);
-                        }
-                    )
+                    Command = new SimpleCommand(() => person.Trace())
                 });
                 hyperlink.Click += (sender, args) =>
                 {
-                    PersonStatusDocument psd = EnsureHasDocument(person);
-                    MainWindow.Instance.documentsListBox.SelectedItem = psd;
+                    MainWindow.Instance.DocumentBrowser.GoTo(person.EnsureHasDocument());
                 };
                 inlines.Add(hyperlink);
                 i++;
             }
         }
 
-        public static PersonStatusDocument EnsureHasDocument(Person person)
-        {
-            PersonStatusDocument document = person.City.allDocuments.OfType<PersonStatusDocument>().FirstOrDefault(psd => psd.Person == person);
-            if (document == null)
-            {
-                document = new PersonStatusDocument(person);
-                person.City.allDocuments.Add(document);
-            }
-
-            return document;
-        }
     }
 }

@@ -341,6 +341,7 @@ namespace ContactTracingPrototype
 
     internal enum PCRTestResult
     {
+        NotTested,
         Positive,
         Negative
     }
@@ -401,6 +402,8 @@ namespace ContactTracingPrototype
         public DiseaseStage DiseaseStatus;
         public List<Day> History = new List<Day>();
         public int LastTracedAt = -1;
+        public DiseaseStage LastKnownDiseaseStatus;
+        public int LastDiseaseStatusCheckAt = -1;
 
         public Person(string name, AgeCategory ageCategory, Residence residence, Area workplace, City city)
         {
@@ -417,6 +420,40 @@ namespace ContactTracingPrototype
         public bool Quarantined { get; set; }
         public PCRTestResult LastTestResult { get; set; }
         public int LastTestDate { get; set; }
+
+        public void Quarantine()
+        {
+            this.Quarantined = true;
+        }
+
+        public void Test()
+        {
+            this.City.OrderedTests.Add(this);
+        }
+
+        public void Trace()
+        {
+            this.LastTracedAt = this.City.Today;
+            this.EnsureHasDocument();
+        }
+
+        public void CheckDiseaseStatus()
+        {
+            this.LastDiseaseStatusCheckAt = this.City.Today;
+            this.LastKnownDiseaseStatus = this.DiseaseStatus;
+        }
+
+        public PersonStatusDocument EnsureHasDocument()
+        {
+            PersonStatusDocument document = this.City.allDocuments.OfType<PersonStatusDocument>().FirstOrDefault(psd => psd.Person == this);
+            if (document == null)
+            {
+                document = new PersonStatusDocument(this);
+                this.City.allDocuments.Add(document);
+            }
+
+            return document;
+        }
     }
 
     internal class Residence : Area
