@@ -9,14 +9,15 @@ namespace ContactTracingPrototype.Documents
     { 
         public static void RenderCases(InlineCollection inlines, List<Person> cases)
         {
-            if (cases.Count == 0)
+            List<Person> aCases = cases.Distinct().ToList();
+            if (aCases.Count == 0)
             {
                 inlines.Add("(nobody)");
                 return;
             }
-            int total = cases.Count;
+            int total = aCases.Count;
             int i = 0;
-            foreach (var person in cases)
+            foreach (var person in aCases)
             {
                 if (i == 0)
                 {
@@ -33,21 +34,47 @@ namespace ContactTracingPrototype.Documents
 
                 Hyperlink hyperlink = new Hyperlink(new Run(person.Name));
                 hyperlink.ContextMenu = new ContextMenu();
-                hyperlink.ContextMenu.Items.Add(new MenuItem()
+                hyperlink.ContextMenu.Opened += (sender, args) =>
                 {
-                    Header = "Quarantine",
-                    Command = new SimpleCommand(()=> person.Quarantine() )
-                });
-                hyperlink.ContextMenu.Items.Add(new MenuItem()
-                {
-                    Header = "Test",
-                    Command = new SimpleCommand(()=> person.Test() )
-                });
-                hyperlink.ContextMenu.Items.Add(new MenuItem()
-                {
-                    Header = "Trace",
-                    Command = new SimpleCommand(() => person.Trace())
-                });
+                    hyperlink.ContextMenu.Items.Clear();
+                    if (person.Quarantined)
+                    {
+                        hyperlink.ContextMenu.Items.Add(new MenuItem()
+                        {
+                            Header = "Quarantine (already quarantined)",
+                            IsEnabled = false
+                        });
+                    }
+                    else
+                    {
+                        hyperlink.ContextMenu.Items.Add(new MenuItem()
+                        {
+                            Header = "Quarantine",
+                            Command = new SimpleCommand(() => person.Quarantined = true)
+                        });
+                    }
+
+                    bool scheduledForTesting = person.City.OrderedTests.Contains(person);
+                    bool alreadyPositive = person.LastTestResult == PCRTestResult.Positive;
+                    hyperlink.ContextMenu.Items.Add(new MenuItem()
+                    {
+                        Header = scheduledForTesting ? "Test (already scheduled for testing)" :
+                            (alreadyPositive ? "Test (tested positive already)" : (person.LastTestResult == PCRTestResult.Negative ? "Test again" : "Test")),
+                        IsEnabled = !alreadyPositive && !scheduledForTesting,
+                        Command = new SimpleCommand(()=> person.City.OrderedTests.Add(person) )
+                    });
+                    hyperlink.ContextMenu.Items.Add(new MenuItem()
+                    {
+                        Header = person.LastTracedAt == -1 ? "Trace" : "Trace again",
+                        Command = new SimpleCommand(() =>
+                            {
+                                person.LastTracedAt = person.City.Today;
+                                EnsureHasDocument(person);
+                            }
+                        )
+                    });
+                };
+              
                 hyperlink.Click += (sender, args) =>
                 {
                     MainWindow.Instance.DocumentBrowser.GoTo(person.EnsureHasDocument());

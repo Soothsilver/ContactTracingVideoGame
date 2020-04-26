@@ -34,19 +34,21 @@ namespace ContactTracingPrototype.Documents
                 textBlock.Inlines.Add($"Yesterday, you ordered {situationReport.TestsOrdered} tests.\n");
                 if (situationReport.PositiveOrdered.Count == 0)
                 {
-                    textBlock.Inlines.Add("All returned negative.\n");
+                    textBlock.Inlines.Add("All returned negative");
                 }
                 else if (situationReport.PositiveOrdered.Count == 1)
                 {
-                    textBlock.Inlines.Add("One retuned positive: \n");
+                    textBlock.Inlines.Add("One retuned positive: ");           
+                    CaseRenderer.RenderCases(textBlock.Inlines, situationReport.PositiveOrdered);
+
                 }
                 else
                 {
-                    textBlock.Inlines.Add("Some of them were positive: \n");
+                    textBlock.Inlines.Add("Some of them were positive: ");      
+                    CaseRenderer.RenderCases(textBlock.Inlines, situationReport.PositiveOrdered);
                 }
 
-                CaseRenderer.RenderCases(textBlock.Inlines, situationReport.PositiveOrdered);
-                textBlock.Inlines.Add(".\n");
+                textBlock.Inlines.Add(".\n\n");
             }
 
             textBlock.Inlines.Add(new Run("Sentinel testing:\n"){FontWeight = FontWeights.Bold});

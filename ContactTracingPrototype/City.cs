@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Media;
 using ContactTracingPrototype.Documents;
+using RandomNameGeneratorLibrary;
 using Soothsilver.Random;
 
 namespace ContactTracingPrototype
@@ -115,16 +116,18 @@ namespace ContactTracingPrototype
 
         private int creatingPersonId = 0;
         private int creatingHouseId = 0;
-
+        NameGenerator nameGenerator = new NameGenerator();
+        
         private void SpawnFamily(int familyMemberCount)
         {
-            Residence residence = new Residence("Apartment #" + (creatingHouseId + 1), ApartmentBuildings[(creatingHouseId / 5)]);
+            string familyName = nameGenerator.GenerateRandomLastName();
+            Residence residence = new Residence("Apartment " + familyName, ApartmentBuildings[(creatingHouseId / 5)]);
             Areas.Add(residence);
             if (familyMemberCount > 2)
             {
                 for (int ci = 2; ci < familyMemberCount; ci++)
                 {
-                    Person child = new Person("Person #" + (1 + creatingPersonId), AgeCategory.Child, residence, null, this);
+                    Person child = new Person(nameGenerator.GenerateRandomFirstName() + " " + familyName, AgeCategory.Child, residence, null, this);
                     People.Add(child);
                     residence.Family.Add(child);
                     creatingPersonId++;
@@ -132,7 +135,7 @@ namespace ContactTracingPrototype
             }
             for (int ci = 0; ci < Math.Min(2, familyMemberCount); ci++)
             {
-                Person adult = new Person("Person #" + (1 + creatingPersonId), AgeCategory.Adult, residence, null, this);
+                Person adult = new Person(nameGenerator.GenerateRandomFirstName() + " " + familyName, AgeCategory.Adult, residence, null, this);
                 People.Add(adult);
                 residence.Family.Add(adult);
                 creatingPersonId++;
@@ -168,12 +171,12 @@ namespace ContactTracingPrototype
                 AdministerTest(orderedTest, report, false);
             }
             OrderedTests.Clear();
-            foreach (Person person in People.Where(ppl => ppl.DiseaseStatus == DiseaseStage.Mild))
+            foreach (Person person in People.Where(ppl => ppl.DiseaseStatus == DiseaseStage.Mild && ppl.LastTestResult != PCRTestResult.Positive))
             {
                 if (R.PercentChance(10))
                     AdministerTest(person, report, true);
             }
-            foreach (Person person in People.Where(ppl => ppl.DiseaseStatus == DiseaseStage.Severe))
+            foreach (Person person in People.Where(ppl => ppl.DiseaseStatus == DiseaseStage.Severe && ppl.LastTestResult != PCRTestResult.Positive))
             {
                 if (R.PercentChance(80))
                     AdministerTest(person, report, true);
@@ -341,7 +344,7 @@ namespace ContactTracingPrototype
 
     internal enum PCRTestResult
     {
-        NotTested,
+        None,
         Positive,
         Negative
     }
@@ -418,6 +421,8 @@ namespace ContactTracingPrototype
         public bool IsInfectious => DiseaseStatus >= DiseaseStage.AsymptomaticInfectious1 && DiseaseStatus < DiseaseStage.Immune;
         public bool IsActiveCase => DiseaseStatus > DiseaseStage.Susceptible && DiseaseStatus < DiseaseStage.Immune;
         public bool Quarantined { get; set; }
+        public PCRTestResult LastTestResult { get; set; } = PCRTestResult.None;
+        public int LastTestDate { get; set; } = -1;
         public PCRTestResult LastTestResult { get; set; }
         public int LastTestDate { get; set; }
 
