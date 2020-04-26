@@ -3,7 +3,8 @@
 As an epidemiologist, you must contain an outbreak of COVID-19 before it gets out of hand. You do this by reading test results, tracing contacts, and ordering quarantine and tests. You win when two full incubation periods pass without a confirmed case.
 
 <img src="Screenshot2.png" width="400" />
-[![](http://img.youtube.com/vi/FbcAtUpyipU/0.jpg)](http://www.youtube.com/watch?v=FbcAtUpyipU "")
+
+[![Pitch](https://img.youtube.com/vi/FbcAtUpyipU/0.jpg)](https://www.youtube.com/watch?v=FbcAtUpyipU)
 
 
 [Download the game!](https://github.com/Soothsilver/ContactTracingVideoGame/releases/download/initial-release/Contact.tracing.video.game.exe)
