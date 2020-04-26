@@ -50,7 +50,7 @@ namespace ContactTracingPrototype.Documents
                         hyperlink.ContextMenu.Items.Add(new MenuItem()
                         {
                             Header = "Quarantine",
-                            Command = new SimpleCommand(() => person.Quarantined = true)
+                            Command = new SimpleCommand(() => person.Quarantine())
                         });
                     }
 
@@ -61,15 +61,15 @@ namespace ContactTracingPrototype.Documents
                         Header = scheduledForTesting ? "Test (already scheduled for testing)" :
                             (alreadyPositive ? "Test (tested positive already)" : (person.LastTestResult == PCRTestResult.Negative ? "Test again" : "Test")),
                         IsEnabled = !alreadyPositive && !scheduledForTesting,
-                        Command = new SimpleCommand(()=> person.City.OrderedTests.Add(person) )
+                        Command = new SimpleCommand(()=> person.Test() )
                     });
                     hyperlink.ContextMenu.Items.Add(new MenuItem()
                     {
                         Header = person.LastTracedAt == -1 ? "Trace" : "Trace again",
                         Command = new SimpleCommand(() =>
                             {
-                                person.LastTracedAt = person.City.Today;
-                                EnsureHasDocument(person);
+                                person.Trace();
+                                person.EnsureHasDocument();
                             }
                         )
                     });

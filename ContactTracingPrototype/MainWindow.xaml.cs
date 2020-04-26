@@ -30,8 +30,7 @@ namespace ContactTracingPrototype
             
             theChart.SetValue(Grid.ColumnSpanProperty, 2);
             theChart2.Visibility = Visibility.Collapsed;
-            documentBrowser = new DocumentBrowser(this.documentTextBox);
-            dailyDocuments = new ObservableCollection<DailyUpdateDocument>();
+            DocumentBrowser = new DocumentBrowser(this.documentTextBox);
 
             this.theChart.DataContext = city.ConfirmedCasesCurve;
             this.theChart2.DataContext = city.Model;
@@ -71,7 +70,6 @@ Tips:
 
             SituationReport situationReport = city.DailyUpdates.Last();
             var document = new DailyUpdateDocument($"Day {city.DailyUpdates.Count}", situationReport);
-            dailyDocuments.Add(document);
             city.allDocuments.Add(document);
             DocumentBrowser.GoTo(document);
             documentsListBox.SelectedItem = document;

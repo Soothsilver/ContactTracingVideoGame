@@ -423,8 +423,6 @@ namespace ContactTracingPrototype
         public bool Quarantined { get; set; }
         public PCRTestResult LastTestResult { get; set; } = PCRTestResult.None;
         public int LastTestDate { get; set; } = -1;
-        public PCRTestResult LastTestResult { get; set; }
-        public int LastTestDate { get; set; }
 
         public void Quarantine()
         {

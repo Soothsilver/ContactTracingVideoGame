@@ -30,7 +30,7 @@ namespace ContactTracingPrototype.Documents
             textBlock.Inlines.Add("Test status: ");
             switch (Person.LastTestResult)
             {
-                case PCRTestResult.NotTested:
+                case PCRTestResult.None:
                     if (Person.City.OrderedTests.Contains(Person))
                     {
                         textBlock.Inlines.Add("Test results will be available tomorrow.\n");
