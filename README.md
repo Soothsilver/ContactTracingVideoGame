@@ -2,7 +2,7 @@
 ==========================
 As an epidemiologist, you must contain an outbreak of COVID-19 before it gets out of hand. You do this by reading test results, tracing contacts, and ordering quarantine and tests. You win when two full incubation periods pass without a confirmed case.
 
-![Screenshot](Screenshot.png)
+<img src="Screenshot2.png" width="400" /
 
 TODO add download link
 
