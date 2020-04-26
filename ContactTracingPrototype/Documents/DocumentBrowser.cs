@@ -1,8 +1,9 @@
-﻿using System.Windows.Controls;
+﻿using System.ComponentModel;
+using System.Windows.Controls;
 
 namespace ContactTracingPrototype.Documents
 {
-    class DocumentBrowser
+    class DocumentBrowser : INotifyPropertyChanged
     {
         private const int HISTORY_SIZE = 1000;
 
@@ -11,14 +12,30 @@ namespace ContactTracingPrototype.Documents
         private int lastPosition = -1;
         private int currentPosition = -1;
         private TextBlock view;
+        private bool raisingEvents;
 
         public DocumentBrowser(TextBlock view)
         {
             this.view = view;
         }
 
+        public bool CanGoBack => currentPosition != firstPosition;
+
+        public bool CanGoForward => currentPosition != lastPosition;
+
+        public Document CurrentDocument
+        {
+            get
+            {
+                if (currentPosition < 0 && currentPosition >= HISTORY_SIZE) return null;
+                return history[currentPosition];
+            }
+        }
+
         public void GoTo(Document document)
         {
+            if (raisingEvents) return;
+
             int nextPosition = GetNextIndex(currentPosition);
             history[nextPosition] = document;
             if (firstPosition == nextPosition)
@@ -32,27 +49,48 @@ namespace ContactTracingPrototype.Documents
             lastPosition = currentPosition = nextPosition;
 
             UpdateView();
+            RaisePropertyChangeEvents();
         }
 
         public void GoBack()
         {
-            if (currentPosition == firstPosition) return;
+            if (raisingEvents) return;
+            if (!CanGoBack) return;
             
             currentPosition = GetPreviousIndex(currentPosition);
             UpdateView();
+            RaisePropertyChangeEvents();
         }
 
         public void GoForward()
         {
-            if (currentPosition == lastPosition) return;
+            if (raisingEvents) return;
+            if (!CanGoForward) return;
             
             currentPosition = GetNextIndex(currentPosition);
             UpdateView();
+            RaisePropertyChangeEvents();
         }
 
         public void Refresh()
         {
             UpdateView();
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        private void OnPropertyChanged(string propertyName)
+        {
+            this.raisingEvents = true;
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            this.raisingEvents = false;
+        }
+
+        private void RaisePropertyChangeEvents()
+        {
+            OnPropertyChanged(nameof(CanGoBack));
+            OnPropertyChanged(nameof(CanGoForward));
+            OnPropertyChanged(nameof(CurrentDocument));
         }
 
         private int GetNextIndex(int p)
@@ -73,7 +111,7 @@ namespace ContactTracingPrototype.Documents
         {
             if (currentPosition < 0 && currentPosition >= HISTORY_SIZE) return;
 
-            Document document = history[currentPosition];
+            Document document = CurrentDocument;
             if (document == null) return;
 
             document.Render(view);

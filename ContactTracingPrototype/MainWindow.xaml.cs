@@ -35,8 +35,10 @@ namespace ContactTracingPrototype
             this.theChart.DataContext = city.ConfirmedCasesCurve;
             this.theChart2.DataContext = city.Model;
 
-            Binding documentsBinding = new Binding {Source = city.allDocuments};
-            this.documentsListBox.SetBinding(ListBox.ItemsSourceProperty, documentsBinding);
+            this.documentsListBox.SetBinding(ListBox.ItemsSourceProperty, new Binding { Source = city.allDocuments });
+            this.documentsListBox.SetBinding(ListBox.SelectedValueProperty, new Binding { Path = new PropertyPath("CurrentDocument"), Source = DocumentBrowser, Mode = BindingMode.OneWay });
+            this.BackButton.SetBinding(Button.IsEnabledProperty, new Binding { Path = new PropertyPath("CanGoBack"), Source = DocumentBrowser });
+            this.ForwardButton.SetBinding(Button.IsEnabledProperty, new Binding { Path = new PropertyPath("CanGoForward"), Source = DocumentBrowser });
 
             var newGameDocument = new NewGameDocument(city.DailyUpdates.First());
             city.allDocuments.Add(newGameDocument);
