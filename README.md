@@ -2,6 +2,8 @@
 ==========================
 As an epidemiologist, you must contain an outbreak of COVID-19 before it gets out of hand. You do this by reading test results, tracing contacts, and ordering quarantine and tests. You win when two full incubation periods pass without a confirmed case.
 
+![Screenshot](Screenshot.png)
+
 TODO add download link
 
 **Problem:** People do not like lockdowns and believe that lockdowns are the only way to suppress the epidemic. Thus, they believe the epidemic can't be suppressed long-term.
