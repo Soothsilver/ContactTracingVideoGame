@@ -50,7 +50,7 @@ namespace ContactTracingPrototype.Documents
                         hyperlink.ContextMenu.Items.Add(new MenuItem()
                         {
                             Header = "Quarantine",
-                            Command = new SimpleCommand(() => person.Quarantined = true)
+                            Command = new SimpleCommand(() => person.Quarantine())
                         });
                     }
 
@@ -61,15 +61,15 @@ namespace ContactTracingPrototype.Documents
                         Header = scheduledForTesting ? "Test (already scheduled for testing)" :
                             (alreadyPositive ? "Test (tested positive already)" : (person.LastTestResult == PCRTestResult.Negative ? "Test again" : "Test")),
                         IsEnabled = !alreadyPositive && !scheduledForTesting,
-                        Command = new SimpleCommand(()=> person.City.OrderedTests.Add(person) )
+                        Command = new SimpleCommand(()=> person.Test() )
                     });
                     hyperlink.ContextMenu.Items.Add(new MenuItem()
                     {
                         Header = person.LastTracedAt == -1 ? "Trace" : "Trace again",
                         Command = new SimpleCommand(() =>
                             {
-                                person.LastTracedAt = person.City.Today;
-                                EnsureHasDocument(person);
+                                person.Trace();
+                                person.EnsureHasDocument();
                             }
                         )
                     });
@@ -77,24 +77,12 @@ namespace ContactTracingPrototype.Documents
               
                 hyperlink.Click += (sender, args) =>
                 {
-                    PersonStatusDocument psd = EnsureHasDocument(person);
-                    MainWindow.Instance.documentsListBox.SelectedItem = psd;
+                    MainWindow.Instance.DocumentBrowser.GoTo(person.EnsureHasDocument());
                 };
                 inlines.Add(hyperlink);
                 i++;
             }
         }
 
-        public static PersonStatusDocument EnsureHasDocument(Person person)
-        {
-            PersonStatusDocument document = person.City.allDocuments.OfType<PersonStatusDocument>().FirstOrDefault(psd => psd.Person == person);
-            if (document == null)
-            {
-                document = new PersonStatusDocument(person);
-                person.City.allDocuments.Add(document);
-            }
-
-            return document;
-        }
     }
 }

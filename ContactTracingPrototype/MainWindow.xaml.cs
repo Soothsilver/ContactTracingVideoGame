@@ -13,8 +13,7 @@ namespace ContactTracingPrototype
     public partial class MainWindow
     {
         City city = new City();
-        DocumentBrowser documentBrowser;
-        ObservableCollection<DailyUpdateDocument> dailyDocuments;
+        internal DocumentBrowser DocumentBrowser;
 
         public static MainWindow Instance;
 
@@ -31,8 +30,7 @@ namespace ContactTracingPrototype
             
             theChart.SetValue(Grid.ColumnSpanProperty, 2);
             theChart2.Visibility = Visibility.Collapsed;
-            documentBrowser = new DocumentBrowser(this.documentTextBox);
-            dailyDocuments = new ObservableCollection<DailyUpdateDocument>();
+            DocumentBrowser = new DocumentBrowser(this.documentTextBox);
 
             this.theChart.DataContext = city.ConfirmedCasesCurve;
             this.theChart2.DataContext = city.Model;
@@ -41,7 +39,6 @@ namespace ContactTracingPrototype
             this.documentsListBox.SetBinding(ListBox.ItemsSourceProperty, documentsBinding);
 
             var newGameDocument = new NewGameDocument(city.DailyUpdates.First());
-            dailyDocuments.Add(newGameDocument);
             city.allDocuments.Add(newGameDocument);
             documentsListBox.SelectedItem = newGameDocument;
             
@@ -73,9 +70,8 @@ Tips:
 
             SituationReport situationReport = city.DailyUpdates.Last();
             var document = new DailyUpdateDocument($"Day {city.DailyUpdates.Count}", situationReport);
-            dailyDocuments.Add(document);
             city.allDocuments.Add(document);
-            documentBrowser.GoTo(document);
+            DocumentBrowser.GoTo(document);
             documentsListBox.SelectedItem = document;
 
             if (city.People.Count(ppl => ppl.IsActiveCase) == 0 && !city.OutbreakEnded)
@@ -111,19 +107,19 @@ A total of {cases} people caught the disease. You needed to quarantine {city.Peo
 
         private void BackButton_Click(object sender, RoutedEventArgs e)
         {
-            documentBrowser.GoBack();
+            DocumentBrowser.GoBack();
         }
 
         private void ForwardButton_Click(object sender, RoutedEventArgs e)
         {
-            documentBrowser.GoForward();
+            DocumentBrowser.GoForward();
         }
 
         private void documentsListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (e.AddedItems.Count > 0)
             {
-                documentBrowser.GoTo((Document) e.AddedItems[0]);
+                DocumentBrowser.GoTo((Document) e.AddedItems[0]);
             }
             else
             {

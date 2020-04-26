@@ -50,6 +50,11 @@ namespace ContactTracingPrototype.Documents
             UpdateView();
         }
 
+        public void Refresh()
+        {
+            UpdateView();
+        }
+
         private int GetNextIndex(int p)
         {
             p++;
